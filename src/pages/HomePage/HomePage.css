@@ -1,0 +1,152 @@
+.home-page {
+}
+
+.home-page h1 {
+  margin-bottom: 1rem;
+}
+
+.home-page p {
+  margin-bottom: 1.5rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+}
+
+.server-data-available {
+  background: #f3e5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #9c27b0;
+}
+
+.server-data-unavailable {
+  background: #fff3e0;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ef6c00;
+}
+
+.pokemon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pokemon-card-link {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 6px;
+}
+
+.pokemon-card-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pokemon-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pokemon-card img {
+  width: 64px;
+  height: 64px;
+}
+
+.pokemon-card p {
+  margin: 0.5rem 0;
+}
+
+.client-data-button {
+  background: #2196f3;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.client-data-button:disabled {
+  cursor: not-allowed;
+}
+
+.client-data-available {
+  background: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #2196f3;
+}
+
+.client-data-pending {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.navigation-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  background: #4caf50;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: inline-block;
+}
+
+.nav-link:hover {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.comparison-ssr {
+  background: #f3e5f5;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.comparison-csr {
+  background: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.comparison-ssr h3,
+.comparison-csr h3 {
+  margin-bottom: 1rem;
+}
+
+.comparison-ssr ul,
+.comparison-csr ul {
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.comparison-ssr li,
+.comparison-csr li {
+  margin-bottom: 0.5rem;
+}

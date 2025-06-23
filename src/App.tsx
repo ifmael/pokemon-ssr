@@ -1,34 +1,83 @@
 import './App.css'
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import React from 'react'
+import { Routes, Route, useLocation } from 'react-router'
+import DebugLayout from './components/DebugLayout'
+import HomePage from './pages/HomePage'
+import PokemonDetailPage from './pages/PokemonDetailPage'
+import TrainerProfilePage from './pages/TrainerProfilePage'
 
-function App() {
-  const [count, setCount] = useState(0)
+interface InitialPageProps {
+  route?: string;
+  data?: any;
+  error?: string;
+}
+
+interface AppProps {
+  initialPageProps?: InitialPageProps;
+}
+
+function App({ initialPageProps }: AppProps) {
+  const location = useLocation();
+
+  // Determinar qué datos usar según la ruta actual
+  const getPageData = () => {
+    if (!initialPageProps) return undefined;
+
+    // Si la ruta del servidor coincide con la ruta actual, usar los datos
+    if (initialPageProps.route === location.pathname) {
+      return initialPageProps.data;
+    }
+
+    // Si no coincide, probablemente sea navegación del cliente
+    return undefined;
+  };
+
+  const pageData = getPageData();
+
+  // Preparar información de debug para el layout
+  const debugInfo = initialPageProps ? {
+    route: initialPageProps.route,
+    data: pageData,
+    error: initialPageProps.error,
+    currentPath: location.pathname
+  } : undefined;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <DebugLayout debugInfo={debugInfo}>
+      <Routes>
+        <Route
+          path="/"
+          element={<HomePage serverData={pageData} />}
+        />
+        <Route
+          path="/pokemon/:pokemonName"
+          element={<PokemonDetailPage serverData={pageData} />}
+        />
+        <Route
+          path="/trainer"
+          element={<TrainerProfilePage serverData={pageData} />}
+        />
+        <Route
+          path="*"
+          element={<NotFoundPage />}
+        />
+      </Routes>
+    </DebugLayout>
   )
+}
+
+
+function NotFoundPage() {
+  return (
+    <div style={{ textAlign: 'center', padding: '2rem' }}>
+      <h1>404</h1>
+      <h2>Página no encontrada</h2>
+      <p>La ruta solicitada no existe en esta aplicación.</p>
+      <a href="/" style={{ color: '#3498db', textDecoration: 'none' }}>
+        ← Volver al inicio
+      </a>
+    </div>
+  );
 }
 
 export default App
