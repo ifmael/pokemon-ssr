@@ -6,7 +6,7 @@ const port = process.env.PORT || 5173;
 const base = process.env.BASE || "/";
 
 const templateHtml = isProduction
-  ? await fs.readFile("./dist/client/index.html", "utf-8")
+  ? await fs.readFile("./dist/index.html", "utf-8")
   : "";
 
 const app = express();
@@ -24,7 +24,7 @@ if (!isProduction) {
   const compression = (await import("compression")).default;
   const sirv = (await import("sirv")).default;
   app.use(compression());
-  app.use(base, sirv("./dist/client", { extensions: [] }));
+  app.use(base, sirv("./dist", { extensions: [] }));
 }
 
 function injectIntoTemplate(template, rendered) {
@@ -54,7 +54,8 @@ app.use("*all", async (req, res) => {
       render = (await vite.ssrLoadModule("/src/entry-server.tsx")).render;
     } else {
       template = templateHtml;
-      render = (await import("./dist/server/entry-server.mjs")).render;
+      const module = await import("./dist/server/entry-server.js");
+      render = module.render;
     }
 
     const rendered = await render(url);
