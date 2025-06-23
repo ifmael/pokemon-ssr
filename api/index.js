@@ -15,8 +15,18 @@ async function initializeApp() {
       const htmlPath = path.join(__dirname, "../dist/client/index.html");
       htmlTemplate = await fs.readFile(htmlPath, "utf-8");
 
-      // Importar el módulo SSR
-      ssrModule = await import("../dist/server/entry-server.js");
+      // Importar el módulo SSR (buscar el archivo correcto)
+      const serverDir = path.join(__dirname, "../dist/server/assets");
+      const serverFiles = await fs.readdir(serverDir);
+      const serverFile = serverFiles.find(
+        (file) => file.startsWith("entry-server-") && file.endsWith(".js")
+      );
+
+      if (!serverFile) {
+        throw new Error("No se encontró el archivo entry-server");
+      }
+
+      ssrModule = await import(`../dist/server/assets/${serverFile}`);
     } catch (error) {
       console.error("Error initializing app:", error);
       throw error;
