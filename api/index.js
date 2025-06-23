@@ -11,8 +11,8 @@ let htmlTemplate, ssrModule;
 async function initializeApp() {
   if (!htmlTemplate || !ssrModule) {
     try {
-      // Leer el HTML template
-      const htmlPath = path.join(__dirname, "../index.html");
+      // Leer el HTML template compilado (con assets)
+      const htmlPath = path.join(__dirname, "../dist/client/index.html");
       htmlTemplate = await fs.readFile(htmlPath, "utf-8");
 
       // Importar el módulo SSR
