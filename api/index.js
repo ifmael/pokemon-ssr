@@ -5,33 +5,32 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Leer el template HTML y el módulo SSR al inicio
+// Cache para evitar lecturas múltiples
 let htmlTemplate, ssrModule;
 
-async function initializeApp() {
-  if (!htmlTemplate || !ssrModule) {
+async function getHtmlTemplate() {
+  if (!htmlTemplate) {
     try {
-      // Leer el HTML template compilado (con assets)
-      const htmlPath = path.join(__dirname, "../dist/client/index.html");
+      const htmlPath = path.join(__dirname, "../dist/index.html");
       htmlTemplate = await fs.readFile(htmlPath, "utf-8");
-
-      // Importar el módulo SSR (buscar el archivo correcto)
-      const serverDir = path.join(__dirname, "../dist/server/assets");
-      const serverFiles = await fs.readdir(serverDir);
-      const serverFile = serverFiles.find(
-        (file) => file.startsWith("entry-server-") && file.endsWith(".js")
-      );
-
-      if (!serverFile) {
-        throw new Error("No se encontró el archivo entry-server");
-      }
-
-      ssrModule = await import(`../dist/server/assets/${serverFile}`);
     } catch (error) {
-      console.error("Error initializing app:", error);
+      console.error("Error leyendo template HTML:", error);
       throw error;
     }
   }
+  return htmlTemplate;
+}
+
+async function getSsrModule() {
+  if (!ssrModule) {
+    try {
+      ssrModule = await import("../dist/server/entry-server.js");
+    } catch (error) {
+      console.error("Error importando módulo SSR:", error);
+      throw error;
+    }
+  }
+  return ssrModule;
 }
 
 function injectIntoTemplate(template, rendered) {
@@ -52,20 +51,19 @@ function injectIntoTemplate(template, rendered) {
 
 export default async function handler(req, res) {
   try {
-    await initializeApp();
+    const template = await getHtmlTemplate();
+    const ssr = await getSsrModule();
 
-    const url = req.url;
-    const rendered = await ssrModule.render(url);
-    const html = injectIntoTemplate(htmlTemplate, rendered);
+    const rendered = await ssr.render(req.url);
+    const html = injectIntoTemplate(template, rendered);
 
     res.setHeader("Content-Type", "text/html");
     res.status(200).send(html);
   } catch (error) {
-    console.error("SSR Error:", error);
+    console.error("Error en SSR:", error);
     res.status(500).send(`
       <h1>Error del Servidor</h1>
-      <p>Ocurrió un error durante el renderizado de la página.</p>
-      <pre>${error.message}</pre>
+      <p>Ocurrió un error durante el renderizado: ${error.message}</p>
     `);
   }
 }
