@@ -6,7 +6,7 @@ const port = process.env.PORT || 5173;
 const base = process.env.BASE || "/";
 
 const templateHtml = isProduction
-  ? await fs.readFile("./dist/index.html", "utf-8")
+  ? await fs.readFile("./dist/client/index.html", "utf-8")
   : "";
 
 const app = express();
@@ -24,7 +24,7 @@ if (!isProduction) {
   const compression = (await import("compression")).default;
   const sirv = (await import("sirv")).default;
   app.use(compression());
-  app.use(base, sirv("./dist", { extensions: [] }));
+  app.use(base, sirv("./dist/client", { extensions: [] }));
 }
 
 function injectIntoTemplate(template, rendered) {
@@ -54,8 +54,7 @@ app.use("*all", async (req, res) => {
       render = (await vite.ssrLoadModule("/src/entry-server.tsx")).render;
     } else {
       template = templateHtml;
-      const module = await import("./dist/server/entry-server.js");
-      render = module.render;
+      render = (await import("./dist/server/entry-server.js")).render;
     }
 
     const rendered = await render(url);
@@ -69,12 +68,6 @@ app.use("*all", async (req, res) => {
   }
 });
 
-// Para desarrollo local
-if (process.env.NODE_ENV !== "production") {
-  app.listen(port, () => {
-    console.log(`Server started at http://localhost:${port}`);
-  });
-}
-
-// Exportar para Vercel
-export default app;
+app.listen(port, () => {
+  console.log(`Server started at http://localhost:${port}`);
+});
